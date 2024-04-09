@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:testing/services/UserPostButton.dart';
 
-
 class PostQuantityDaily extends StatelessWidget {
   Future<void> _postQuantityDaily(int currentStatus) async {
     Map<String, dynamic> quantity = {
@@ -49,3 +48,4 @@ class PostQuantityDaily extends StatelessWidget {
     );
   }
 }
+

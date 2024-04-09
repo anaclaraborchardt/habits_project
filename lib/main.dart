@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
               SizedBox(height: 20),
               PostQuantityDaily(),
               SizedBox(height: 20),
-              GetUser()
+              GetUser(),
+              SizedBox(height: 20),
+              GetHabit()
             ],
           ),
         ),

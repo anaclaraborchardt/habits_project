@@ -52,18 +52,21 @@ class UserPostButton extends StatelessWidget {
 class User {
   final int id;
   final String name;
+  final String email;
 
-  const User({required this.id, required this.name});
+  const User({required this.id, required this.name, required this.email});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return switch (json) {
       {
         'id': int id,
         'name': String name,
+        'email': String email
       } =>
         User(
           id: id,
           name: name,
+          email: email
         ),
       _ => throw const FormatException('Failed to load user.'),
     };
@@ -72,11 +75,16 @@ class User {
 
 class GetUser extends StatelessWidget {
   Future<User> _getUser() async {
-    var url = 'http://localhost:8080/user';
+    var url = 'http://localhost:8080/user/1';
     var headers = {'Content-Type': 'application/json'};
     var response = await http.get(Uri.parse(url), headers: headers);
     final responseJson = jsonDecode(response.body) as Map<String, dynamic>;
 
+    if (response.statusCode == 200) {
+      debugPrint('GET DE USUÁRIO FUNCIONANDO!');
+    } else {
+      debugPrint('FALHA AO DAR GET EM USUÁRIO ${response.statusCode}');
+    }
     return User.fromJson(responseJson);
   }
 
@@ -90,12 +98,37 @@ class GetUser extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ElevatedButton(
-            onPressed: () {
-              final userName = _getUserController.text.trim();
-              _getUser();
+            onPressed: () async {
+              final user = await _getUser();
+              if (user != null) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Detalhes do Usuário'),
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('ID: ${user.id}'),
+                          Text('Nome: ${user.name}'),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Fechar'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
-            child: const Text('Get User'),
-          )
+            child: const Text('Obter Usuário'),
+          ),
         ],
       ),
     );
